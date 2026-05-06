@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "fastapi-app.fullname" . }}-config
+data:
+  APP_ENV: {{ .Values.env.APP_ENV | quote }}
+  APP_NAME: {{ .Values.env.APP_NAME | quote }}
+  FEATURE_FLAG: {{ .Values.env.FEATURE_FLAG | quote }}

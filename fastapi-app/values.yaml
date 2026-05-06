@@ -1,0 +1,34 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/pauldjmetsi/fastapi-docker-app
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+env:
+  APP_ENV: dev
+  APP_NAME: fastapi-demo
+  FEATURE_FLAG: "true"
+
+secret:
+  API_KEY: "changeme"
+
+ingress:
+  enabled: true
+  className: kommander-traefik
+  issuer: selfsigned-issuer
+
+  # These become dynamic
+  appName: fastapi
+  environment: dev
+  nipDomain: "10.2.0.151.nip.io"
+
+  # Need to be unique for each environment
+  tlsSecret: fastapi-tls
+
+resources: {}

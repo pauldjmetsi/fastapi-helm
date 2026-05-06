@@ -1,0 +1,12 @@
+containers:
+  - name: fastapi
+    image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+    imagePullPolicy: {{ .Values.image.pullPolicy }}
+    ports:
+      - containerPort: 8080
+
+    envFrom:
+      - configMapRef:
+          name: {{ include "fastapi-app.fullname" . }}-config
+      - secretRef:
+          name: {{ include "fastapi-app.fullname" . }}-secret

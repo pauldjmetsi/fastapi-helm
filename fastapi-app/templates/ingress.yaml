@@ -1,0 +1,28 @@
+{{- if .Values.ingress.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "fastapi-app.fullname" . }}-ingress
+  labels:
+    traefik.ingress.kubernetes.io/instance: "kommander-traefik"
+  annotations:
+    kubernetes.io/ingress.class: "kommander-traefik"
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.issuer | quote }}
+spec:
+  ingressClassName: {{ .Values.ingress.className | quote }}
+  tls:
+    - hosts:
+        - {{ printf "%s-%s.%s" .Values.ingress.appName .Values.ingress.environment .Values.ingress.nipDomain | quote }}
+      secretName: {{ .Values.ingress.tlsSecret | quote }}
+  rules:
+    - host: {{ printf "%s-%s.%s" .Values.ingress.appName .Values.ingress.environment .Values.ingress.nipDomain | quote }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "fastapi-app.fullname" . }}
+                port:
+                  number: {{ .Values.service.port }}
+{{- end }}
