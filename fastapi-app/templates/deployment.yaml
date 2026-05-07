@@ -1,12 +1,27 @@
-containers:
-  - name: fastapi
-    image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-    imagePullPolicy: {{ .Values.image.pullPolicy }}
-    ports:
-      - containerPort: 8080
-
-    envFrom:
-      - configMapRef:
-          name: {{ include "fastapi-app.fullname" . }}-config
-      - secretRef:
-          name: {{ include "fastapi-app.fullname" . }}-secret
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "fastapi-app.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "fastapi-app.name" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "fastapi-app.name" . }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "fastapi-app.name" . }}
+    spec:
+      containers:
+        - name: fastapi
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: {{ include "fastapi-app.fullname" . }}-config
+            - secretRef:
+                name: {{ include "fastapi-app.fullname" . }}-secret
